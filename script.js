@@ -18,29 +18,62 @@ const holdBtn = document.querySelector('.btn--hold');
 score0.textContent = 0;
 score1.textContent = 0;
 diceEl.classList.add('hidden');
+let playState = true;
+
+const switchPlater = function () {
+  player0.classList.toggle('player--active');
+  player1.classList.toggle('player--active');
+  player0.classList.contains('player--active')
+    ? (currentScore1.textContent = 0)
+    : (currentScore0.textContent = 0);
+  currentScore = 0;
+};
 
 let currentScore = 0;
+
+const scores = [0, 0];
 
 // Rolling dice functionality
 rollDiceBtn.addEventListener('click', function () {
   // 1. Generating a random dice roll
-  const dice = Math.trunc(Math.random() * 6) + 1;
-  const diceFile = 'dice-'.concat(dice).concat('.png');
-  diceEl.classList.remove('hidden');
-  diceEl.src = diceFile;
-  if (dice != 1) {
-    // Add dice to current score
-    currentScore += dice;
+  if (playState) {
+    const dice = Math.trunc(Math.random() * 6) + 1;
+    const diceFile = 'dice-'.concat(dice).concat('.png');
+    diceEl.classList.remove('hidden');
+    diceEl.src = diceFile;
+    if (dice != 1) {
+      // Add dice to current score
+      currentScore += dice;
+      player0.classList.contains('player--active')
+        ? (currentScore0.textContent = currentScore)
+        : (currentScore1.textContent = currentScore);
+    } else {
+      // Switch to next player
+      switchPlater();
+    }
+  }
+});
+
+//Hold btn.
+holdBtn.addEventListener('click', function () {
+  if (playState) {
     player0.classList.contains('player--active')
-      ? (currentScore0.textContent = currentScore)
-      : (currentScore1.textContent = currentScore);
-  } else {
-    // Switch to next player
-    player0.classList.toggle('player--active');
-    player1.classList.toggle('player--active');
+      ? (scores[0] += Number(currentScore0.textContent))
+      : (scores[1] += Number(currentScore1.textContent));
     player0.classList.contains('player--active')
-      ? (currentScore1.textContent = 0)
-      : (currentScore0.textContent = 0);
-    currentScore = 0;
+      ? (score0.textContent = scores[0])
+      : (score1.textContent = scores[1]);
+    const activePlayer = player0.classList.contains('player--active') ? 0 : 1;
+    if (scores[activePlayer] >= 20) {
+      playState = false;
+      diceEl.classList.add('hidden');
+      document
+        .querySelector(`.player--${activePlayer}`)
+        .classList.add('player--winner');
+      document
+        .querySelector(`.player--${activePlayer}`)
+        .classList.remove('player--active');
+    }
+    switchPlater();
   }
 });
