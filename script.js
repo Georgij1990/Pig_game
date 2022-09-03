@@ -14,13 +14,12 @@ const diceEl = document.querySelector('.dice');
 const rollDiceBtn = document.querySelector('.btn--roll');
 const newGameBtn = document.querySelector('.btn--new');
 const holdBtn = document.querySelector('.btn--hold');
-
-score0.textContent = 0;
+const resetBtn = (score0.textContent = 0);
 score1.textContent = 0;
 diceEl.classList.add('hidden');
 let playState = true;
 
-const switchPlater = function () {
+const switchPlayer = function () {
   player0.classList.toggle('player--active');
   player1.classList.toggle('player--active');
   player0.classList.contains('player--active')
@@ -49,7 +48,7 @@ rollDiceBtn.addEventListener('click', function () {
         : (currentScore1.textContent = currentScore);
     } else {
       // Switch to next player
-      switchPlater();
+      switchPlayer();
     }
   }
 });
@@ -73,7 +72,29 @@ holdBtn.addEventListener('click', function () {
       document
         .querySelector(`.player--${activePlayer}`)
         .classList.remove('player--active');
+    } else {
+      switchPlayer();
     }
-    switchPlater();
   }
+});
+
+// //Reset btn
+newGameBtn.addEventListener('click', function () {
+  console.log(player0.classList.toggle('player--active'));
+  if (
+    player0.classList.contains('player--winner') ||
+    player1.classList.contains('player--winner')
+  ) {
+    player0.classList.contains('player--winner')
+      ? player0.classList.toggle('player--winner')
+      : player1.classList.toggle('player--winner');
+  }
+  playState = true;
+  currentScore0.textContent = 0;
+  currentScore1.textContent = 0;
+  score0.textContent = 0;
+  score1.textContent = 0;
+  currentScore = 0;
+  scores[0] = 0;
+  scores[1] = 0;
 });
